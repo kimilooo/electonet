@@ -1,0 +1,21 @@
+{
+  "name": "electonet-dashboard",
+  "version": "3.5.0",
+  "description": "Electonet - Modern, Zero-Agent Server Monitoring Dashboard",
+  "main": "server.js",
+  "author": "Kimilooo (https://github.com/kimilooo)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kimilooo/electonet-dashboard.git"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.1",
+    "i18next": "^26.0.8",
+    "ssh2": "^1.17.0"
+  }
+}

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🪷 Electonet</title>
+    <link rel="icon" href="data:,">
+    
+    <!-- External Dependencies -->
+    <script src="i18next.min.js"></script>
+    <script src="chart.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;600;700;800&family=Poppins:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="electonet-theme">
+
+<!-- Background FX -->
+<canvas id="matrixRain"></canvas>
+<div id="particles"></div>
+<div class="parallax-bg"></div>
+
+<!-- ============================================================ -->
+<!-- LOGIN OVERLAY -->
+<!-- ============================================================ -->
+<div class="login-overlay" id="loginModal">
+    <div class="login-glass">
+        <div class="lotus-glow">🌸</div>
+        <h1 class="text-gradient">Electonet</h1>
+        <p class="login-sub" data-i18n="login_subtitle">Lotus Smart Monitoring System</p>
+
+        <!-- Resume Connection -->
+        <div id="resumeConnection" style="display:none; margin-bottom: 20px; width: 100%;">
+            <div class="resume-card">
+                <div data-i18n="resume_found" style="font-weight: 700; color: var(--accent);">Previous session found!</div>
+                <div id="resumeInfo" style="font-size: 0.85rem; opacity: 0.7; margin: 10px 0;"></div>
+                <button type="button" class="premium-btn glow-btn" id="resumeBtn" data-i18n="label_quick_login">⚡ Quick Login</button>
+            </div>
+            <div class="divider"><span>OR</span></div>
+        </div>
+
+        <form id="loginForm" autocomplete="off">
+            <div class="input-group">
+                <input type="text" id="hostInput" placeholder="Server IP / Domain" required dir="ltr">
+            </div>
+            <div class="input-row">
+                <input type="number" id="portInput" placeholder="Port (22)" value="22" required dir="ltr">
+                <input type="text" id="userInput" placeholder="Username" required dir="ltr">
+            </div>
+            <div class="input-group">
+                <input type="password" id="passInput" placeholder="SSH Password" required dir="ltr">
+            </div>
+            <button type="submit" class="premium-btn glow-btn" data-i18n="login_btn">Login Now</button>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SIDEBAR NAVIGATION -->
+<!-- ============================================================ -->
+<div class="overlay" id="sidebarOverlay"></div>
+<nav class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebarClose">✕</button>
+    <div class="sidebar-header">
+        <div class="brand">
+            <span class="brand-icon">🌸</span>
+            <span class="brand-name">Electonet</span>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <div class="orb-menu-item active" data-tab="overview">
+            <span class="orb-icon">📊</span>
+            <span class="orb-label" data-i18n="overview_tab">Overview</span>
+        </div>
+        <div class="orb-menu-item" data-tab="charts">
+            <span class="orb-icon">📈</span>
+            <span class="orb-label" data-i18n="charts_tab">Charts</span>
+        </div>
+        <div class="orb-menu-item" data-tab="smart">
+            <span class="orb-icon">🧠</span>
+            <span class="orb-label" data-i18n="smart_tab">Diagnosis</span>
+        </div>
+        <div class="orb-menu-item" data-tab="problems">
+            <span class="orb-icon">⚠️</span>
+            <span class="orb-label" data-i18n="problems_tab">Problems</span>
+        </div>
+        <div class="orb-menu-item" data-tab="troubleshoot">
+            <span class="orb-icon">🔧</span>
+            <span class="orb-label" data-i18n="troubleshoot_tab">Troubleshoot</span>
+        </div>
+        <div class="orb-menu-item" data-tab="livelogs">
+            <span class="orb-icon">📺</span>
+            <span class="orb-label" data-i18n="livelogs_tab">Live Logs</span>
+        </div>
+        <div class="orb-menu-item" data-tab="optimize">
+            <span class="orb-icon">🚀</span>
+            <span class="orb-label" data-i18n="optimize_tab">Optimization</span>
+        </div>
+        <div class="orb-menu-item" data-tab="debug">
+            <span class="orb-icon">🐞</span>
+            <span class="orb-label" data-i18n="debug_tab">Smart Debug</span>
+        </div>
+        <div class="orb-menu-item" data-tab="terminal">
+            <span class="orb-icon">⌨️</span>
+            <span class="orb-label" data-i18n="terminal_tab">Terminal</span>
+        </div>
+        <div class="orb-menu-item" data-tab="matrix">
+            <span class="orb-icon">⚙️</span>
+            <span class="orb-label" data-i18n="matrix_admin_tab">Matrix Admin</span>
+        </div>
+        <div class="orb-menu-item" data-tab="theme">
+            <span class="orb-icon">🎨</span>
+            <span class="orb-label" data-i18n="theme_tab">Theme Builder</span>
+        </div>
+    </div>
+
+    <div class="sidebar-footer" style="padding: 20px; text-align: center; border-top: 1px solid var(--glass-border);">
+        <button class="logout-btn" id="logoutBtn" style="margin-bottom: 15px;">🚪 Exit</button>
+        <div class="author-credit" style="font-size: 0.75rem; opacity: 0.6;">
+            Developed by <a href="https://github.com/kimilooo" target="_blank" style="color: var(--primary); font-weight: 700; text-decoration: none;">Kimilooo</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- MAIN DASHBOARD CONTENT -->
+<!-- ============================================================ -->
+<main class="main-content">
+    <!-- TOPBAR -->
+    <header class="top-header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle" onclick="document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('active')">☰</button>
+            <div class="server-status" id="connPulse">
+                <span class="pulse-dot"></span>
+                <span id="serverInfo">Quantum Connection</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="time-warp" id="timeWarp">00:00:00</div>
+            <button class="icon-btn" onclick="toggleMute()" id="muteBtn">🔊</button>
+            <button class="icon-btn" onclick="toggleLang()">🌍</button>
+            <button class="premium-btn refresh-btn" id="refreshBtn">🔄 SYNC</button>
+        </div>
+    </header>
+
+    <div id="notifStream" class="notif-stream"></div>
+
+    <!-- TABS CONTAINER -->
+    <div class="tab-container">
+        <!-- Overview Tab -->
+        <section id="tab-overview" class="tab-content active">
+            <div class="electonet-grid">
+                <!-- CPU -->
+                <div class="electonet-card tilt-card" id="cpuValue">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <span data-i18n="cpu_load">CPU LOAD</span>
+                        <span class="card-badge" id="cpuBadge">Normal</span>
+                    </div>
+                    <div class="ring-container">
+                        <svg class="ring-svg" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+                            <circle class="ring-fill" cx="60" cy="60" r="54" id="cpuRing"></circle>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="var(--primary)" />
+                                    <stop offset="100%" stop-color="var(--accent)" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="ring-text">
+                            <span class="value-number">0</span>
+                            <span class="value-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="card-detail" id="cpuDetail" style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);text-align:center;"></div>
+                </div >
+                <!-- RAM -->
+                <div class="electonet-card tilt-card" id="ramValue">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <span data-i18n="ram_mem">RAM USAGE</span>
+                        <span class="card-badge" id="ramBadge">Normal</span>
+                    </div>
+                    <div class="ring-container">
+                        <svg class="ring-svg" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+                            <circle class="ring-fill" cx="60" cy="60" r="54" id="ramRing"></circle>
+                        </svg>
+                        <div class="ring-text">
+                            <span class="value-number">0</span>
+                            <span class="value-unit">GB</span>
+                        </div>
+                    </div>
+                    <div class="card-detail" id="ramDetail" style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);text-align:center;"></div>
+                </div>
+                <!-- Disk -->
+                <div class="electonet-card tilt-card" id="diskValue">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <span data-i18n="disk_space">DISK SPACE</span>
+                        <span class="card-badge" id="diskBadge">Normal</span>
+                    </div>
+                    <div class="ring-container">
+                        <svg class="ring-svg" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+                            <circle class="ring-fill" cx="60" cy="60" r="54" id="diskRing"></circle>
+                        </svg>
+                        <div class="ring-text">
+                            <span class="value-number">0</span>
+                            <span class="value-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="card-detail" id="diskDetail" style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);text-align:center;"></div>
+                </div>
+                <!-- PostgreSQL -->
+                <div class="electonet-card tilt-card" id="pgValue">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <span data-i18n="pg_conn">POSTGRES</span>
+                        <span class="card-badge" id="pgBadge">Normal</span>
+                    </div>
+                    <div class="ring-container">
+                        <svg class="ring-svg" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+                            <circle class="ring-fill" cx="60" cy="60" r="54" id="pgRing"></circle>
+                        </svg>
+                        <div class="ring-text">
+                            <span class="value-number">0</span>
+                            <span class="value-unit">CONNS</span>
+                        </div>
+                    </div>
+                    <div class="card-detail" id="pgDetail" style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);text-align:center;"></div>
+                </div>
+            </div>
+
+            <div class="bottom-layout">
+                <div class="electonet-panel diag-panel">
+                    <h3>🧠 <span data-i18n="smart_diag_title">AI Diagnosis</span></h3>
+                    <div id="aiDiagnosis">
+                        <div class="diag-item">Scanning quantum patterns...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Tab -->
+        <section id="tab-charts" class="tab-content">
+            <div class="electonet-panel chart-panel" style="min-height:350px;">
+                <h3 data-i18n="charts_tab">📈 Charts</h3>
+                <canvas id="resourceChart" style="width:100%;height:300px;"></canvas>
+            </div>
+        </section>
+
+        <!-- Smart Diagnosis Tab -->
+        <section id="tab-smart" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="smart_diag_title">🧠 AI Diagnosis</h3>
+                <p style="color:var(--text-muted);margin-bottom:20px;" data-i18n="smart_diag_desc">Based on live server data, the most probable issues are:</p>
+                <div id="aiDiagnosisTab">
+                    <div class="diagnosis-item" data-i18n="diag_scanning">Scanning quantum patterns...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problems Tab -->
+        <section id="tab-problems" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="problems_title">⚠️ Known Issues</h3>
+                <div class="problems-list">
+                    <div class="problem-card critical">
+                        <div class="problem-header"><span class="problem-title" data-i18n="prob_pg_title">🔴 PostgreSQL Connection Saturation</span></div>
+                        <div class="problem-body" data-i18n="prob_pg_desc">max_connections=200 sometimes fills up.</div>
+                        <div class="problem-solution" data-i18n="prob_pg_sol">✅ Increase to 300, monitor with bot, reduce pool_size</div>
+                    </div>
+                    <div class="problem-card warn">
+                        <div class="problem-header"><span class="problem-title" data-i18n="prob_cpu_title">🔴 High CPU Usage</span></div>
+                        <div class="problem-body" data-i18n="prob_cpu_desc">Due to sliding sync and 70-80 active users.</div>
+                        <div class="problem-solution" data-i18n="prob_cpu_sol">✅ Reduce sync_response_cache_duration to 30s</div>
+                    </div>
+                    <div class="problem-card warn">
+                        <div class="problem-header"><span class="problem-title" data-i18n="prob_fed_title">🟡 Heavy Federation Queue</span></div>
+                        <div class="problem-body" data-i18n="prob_fed_desc">Sending to dead servers increases destination_rooms.</div>
+                        <div class="problem-solution" data-i18n="prob_fed_sol">✅ Periodic cleanup</div>
+                    </div>
+                    <div class="problem-card">
+                        <div class="problem-header"><span class="problem-title" data-i18n="prob_log_title">🟡 Large Logs</span></div>
+                        <div class="problem-body" data-i18n="prob_log_desc">Up to 2-3 GB.</div>
+                        <div class="problem-solution" data-i18n="prob_log_sol">✅ Configure logrotate</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Troubleshoot Tab -->
+        <section id="tab-troubleshoot" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="troubleshoot_tab">🔧 Troubleshooting</h3>
+                <p style="color:var(--text-muted);margin-bottom:20px;" data-i18n="trb_guide_desc">Follow these steps to diagnose common issues:</p>
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span data-i18n="trb_slow">🐢 Slow Server</span>
+                            <span class="accordion-arrow">▼</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-label" data-i18n="step_load">Check Load</div><div class="cmd-code"><span class="cmd-text">uptime</span></div></div></div>
+                            <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-label" data-i18n="step_ram">Check RAM</div><div class="cmd-code"><span class="cmd-text">free -h</span></div></div></div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span data-i18n="trb_conn">🔌 Connection Issues</span>
+                            <span class="accordion-arrow">▼</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-label" data-i18n="step_api">Test API</div><div class="cmd-code"><span class="cmd-text">curl -s https://matrix.electonet.ir/_matrix/client/versions</span></div></div></div>
+                            <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-label" data-i18n="step_srv">Service Status</div><div class="cmd-code"><span class="cmd-text">systemctl status matrix-synapse nginx postgresql</span></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Logs Tab -->
+        <section id="tab-livelogs" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="livelogs_tab">📺 Live Logs</h3>
+                <div class="logs-controls" style="margin-bottom:16px;">
+                    <button class="service-btn" data-log="synapse" data-i18n="live_synapse">Matrix (Synapse)</button>
+                    <button class="service-btn" data-log="nginx" data-i18n="live_nginx">Nginx</button>
+                    <button class="service-btn" data-log="postgres" data-i18n="live_pg">PostgreSQL</button>
+                </div>
+                <div class="term-window" style="height:400px;overflow-y:auto;">
+                    <div class="term-content" id="liveLogContent" data-i18n="live_placeholder">Select a service to view live logs...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Terminal Tab -->
+        <section id="tab-terminal" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="terminal_tab">⌨️ Terminal</h3>
+                <div class="terminal-body" id="terminalBody" style="background:#050510;border-radius:16px;padding:20px;height:350px;overflow-y:auto;margin-bottom:16px;">
+                    <div class="term-line"><span class="term-prompt">❯</span> <span class="term-text" data-i18n="term_ready">Connection ready. Type command...</span></div>
+                </div>
+                <div class="terminal-input-row">
+                    <span class="terminal-prompt">❯</span>
+                    <input type="text" id="terminalInput" class="terminal-input" spellcheck="false" autocomplete="off" data-i18n="term_placeholder" placeholder="Type a command... (e.g., top -bn1 | head -20)">
+                    <button id="termRunBtn" class="terminal-run-btn">EXEC</button>
+                </div>
+                <div class="terminal-hints" style="margin-top:12px;">
+                    <span class="hint-tag" onclick="document.getElementById('terminalInput').value='uptime';document.getElementById('termRunBtn').click()">uptime</span>
+                    <span class="hint-tag" onclick="document.getElementById('terminalInput').value='free -h';document.getElementById('termRunBtn').click()">free -h</span>
+                    <span class="hint-tag" onclick="document.getElementById('terminalInput').value='df -h';document.getElementById('termRunBtn').click()">df -h</span>
+                    <span class="hint-tag" onclick="document.getElementById('terminalInput').value='systemctl status matrix-synapse';document.getElementById('termRunBtn').click()">synapse status</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optimize Tab -->
+        <section id="tab-optimize" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="optimize_tab">🚀 Optimization</h3>
+                <p style="color:var(--text-muted);margin-bottom:20px;" data-i18n="opt_desc">Server maintenance and resource management:</p>
+                <div class="electonet-grid">
+                    <div class="control-card">
+                        <span class="control-icon">🧹</span>
+                        <span data-i18n="opt_ram">Clear RAM Cache</span>
+                        <button class="control-btn" data-action="clear_ram" data-i18n="btn_run">RUN</button>
+                    </div>
+                    <div class="control-card">
+                        <span class="control-icon">📝</span>
+                        <span data-i18n="opt_journal">Clear System Journal</span>
+                        <button class="control-btn" data-action="clear_journal" data-i18n="btn_run">RUN</button>
+                    </div>
+                    <div class="control-card">
+                        <span class="control-icon">📋</span>
+                        <span data-i18n="opt_nginx_logs">Clear Nginx Logs</span>
+                        <button class="control-btn" data-action="clear_nginx" data-i18n="btn_run">RUN</button>
+                    </div>
+                    <div class="control-card danger">
+                        <span class="control-icon">🔄</span>
+                        <span data-i18n="opt_reboot">Reboot Server</span>
+                        <button class="control-btn" data-action="reboot_server" data-i18n="btn_run">RUN</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Debug Tab -->
+        <section id="tab-debug" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="debug_tab">🐞 Smart Debug</h3>
+                <p style="color:var(--text-muted);margin-bottom:16px;" data-i18n="debug_desc">Reads last 50 log lines and interprets errors:</p>
+                <div class="debug-controls" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+                    <button class="service-btn" data-service="synapse" data-i18n="dbg_matrix">Debug Matrix</button>
+                    <button class="service-btn" data-service="nginx" data-i18n="dbg_nginx">Debug Nginx</button>
+                    <button class="service-btn" data-service="postgres" data-i18n="dbg_pg">Debug Database</button>
+                </div>
+                <div class="debug-output" id="debugOutput" style="background:rgba(0,0,0,0.4);border-radius:16px;padding:20px;min-height:200px;font-family:var(--font-mono);font-size:0.85rem;line-height:1.7;direction:ltr;text-align:left;">
+                    <span data-i18n="dbg_placeholder">Select a service for deep analysis...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Matrix Admin Tab -->
+        <section id="tab-matrix" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="matrix_admin_title">⚙️ Matrix Synapse Admin</h3>
+                <p style="color:var(--text-muted);margin-bottom:24px;" data-i18n="matrix_admin_desc">Advanced management tools directly via Synapse Admin API.</p>
+
+                <!-- Token Config -->
+                <div class="control-card" style="margin-bottom:24px;">
+                    <div style="flex:1;">
+                        <h4 data-i18n="matrix_token_title">Admin Access Token</h4>
+                        <p style="font-size:0.8rem;color:var(--text-muted);" data-i18n="matrix_token_desc">Required for API commands. Stored securely on the backend.</p>
+                        <div style="display:flex;gap:10px;margin-top:10px;">
+                            <input type="password" id="matrixTokenInput" class="terminal-input" placeholder="syt_..." style="flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:10px;padding:10px;color:#fff;">
+                            <button id="saveMatrixTokenBtn" class="premium-btn glow-btn" data-i18n="matrix_btn_save_token">Save Token</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="electonet-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+                    
+                    <!-- Media Purge -->
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:12px;">
+                        <h4 data-i18n="matrix_media_title">🧹 Media Purge</h4>
+                        <p style="font-size:0.8rem;color:var(--text-muted);" data-i18n="matrix_media_desc">Delete old cached media to free up disk space.</p>
+                        <div style="display:flex;align-items:center;gap:10px;width:100%;">
+                            <input type="number" id="mediaPurgeDays" value="30" min="1" style="width:80px;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:8px;padding:8px;color:#fff;">
+                            <span data-i18n="matrix_days_old">Days Old</span>
+                        </div>
+                        <button id="runMediaPurgeBtn" class="control-btn" style="width:100%;background:linear-gradient(135deg,#f97316,#ef4444);" data-i18n="matrix_btn_purge">Purge Media</button>
+                    </div>
+
+                    <!-- User Management -->
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:12px;">
+                        <h4 data-i18n="matrix_user_title">👤 User Management</h4>
+                        <p style="font-size:0.8rem;color:var(--text-muted);" data-i18n="matrix_user_desc">Deactivate a user and purge their data.</p>
+                        <input type="text" id="matrixUserId" placeholder="@user:domain.com" style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:8px;padding:8px;color:#fff;">
+                        <button id="runUserDeactivateBtn" class="control-btn" style="width:100%;background:linear-gradient(135deg,#e11d48,#be123c);" data-i18n="matrix_btn_deactivate">Deactivate User</button>
+                    </div>
+
+                    <!-- Server Stats -->
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:12px;grid-column:1/-1;">
+                        <h4 data-i18n="matrix_stats_title">📊 Server Statistics</h4>
+                        <p style="font-size:0.8rem;color:var(--text-muted);" data-i18n="matrix_stats_desc">Fetch live database sizes and server stats from the Admin API.</p>
+                        <button id="fetchMatrixStatsBtn" class="premium-btn glow-btn" data-i18n="matrix_btn_stats">Fetch Statistics</button>
+                        <div id="matrixStatsOutput" style="width:100%;background:rgba(0,0,0,0.5);border-radius:12px;padding:16px;min-height:100px;font-family:var(--font-mono);font-size:0.85rem;color:var(--text-main);direction:ltr;text-align:left;white-space:pre-wrap;overflow-x:auto;">
+                            <span data-i18n="matrix_stats_placeholder">Stats will appear here...</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- THEME BUILDER TAB - FULL & COMPLETE -->
+        <!-- ============================================================ -->
+        <section id="tab-theme" class="tab-content">
+            <div class="electonet-panel">
+                <h3 data-i18n="theme_title">🎨 Electonet Theme Builder</h3>
+                <p style="color:var(--text-muted);margin-bottom:24px;" data-i18n="theme_desc">Personalize your dashboard. All settings are saved in your browser.</p>
+
+                <!-- Preset Themes -->
+                <div style="margin-bottom:28px;">
+                    <label style="font-weight:700;margin-bottom:12px;display:block;" data-i18n="theme_presets">Quick Presets</label>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button class="preset-btn" data-preset="electonet" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);">Electonet</button>
+                        <button class="preset-btn" data-preset="ocean" style="background:linear-gradient(135deg,#06b6d4,#3b82f6);">Ocean</button>
+                        <button class="preset-btn" data-preset="forest" style="background:linear-gradient(135deg,#10b981,#059669);">Forest</button>
+                        <button class="preset-btn" data-preset="sunset" style="background:linear-gradient(135deg,#f97316,#ef4444);">Sunset</button>
+                        <button class="preset-btn" data-preset="midnight" style="background:linear-gradient(135deg,#6366f1,#a855f7);">Midnight</button>
+                        <button class="preset-btn" data-preset="cherry" style="background:linear-gradient(135deg,#e11d48,#be123c);">Cherry</button>
+                    </div>
+                </div>
+
+                <!-- Color Pickers Grid -->
+                <div class="electonet-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;">
+                        <label data-i18n="theme_primary">Primary Color</label>
+                        <input type="color" id="themePrimary" value="#ec4899" style="width:100%;height:42px;border:none;border-radius:10px;cursor:pointer;">
+                    </div>
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;">
+                        <label data-i18n="theme_accent">Accent Color</label>
+                        <input type="color" id="themeAccent" value="#8b5cf6" style="width:100%;height:42px;border:none;border-radius:10px;cursor:pointer;">
+                    </div>
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;">
+                        <label data-i18n="theme_bg">Background Color</label>
+                        <input type="color" id="themeBg" value="#0f0c29" style="width:100%;height:42px;border:none;border-radius:10px;cursor:pointer;">
+                    </div>
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;">
+                        <label data-i18n="theme_card_color">Card Color</label>
+                        <input type="color" id="themeCard" value="#1a153a" style="width:100%;height:42px;border:none;border-radius:10px;cursor:pointer;">
+                    </div>
+                    <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;">
+                        <label data-i18n="theme_sidebar_color">Sidebar Color</label>
+                        <input type="color" id="themeSidebar" value="#0f0c29" style="width:100%;height:42px;border:none;border-radius:10px;cursor:pointer;">
+                    </div>
+                </div>
+
+                <!-- Background Image -->
+                <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:20px;">
+                    <label data-i18n="theme_bg_img">🖼️ Background Image (URL)</label>
+                    <input type="text" id="themeBgImg" class="terminal-input" dir="ltr" style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:10px;padding:12px;" data-i18n="theme_bg_img_ph" placeholder="Paste image URL (e.g., https://...)">
+                </div>
+
+                <!-- Transparency Slider -->
+                <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:20px;">
+                    <label data-i18n="theme_glass">🪟 Card Transparency (Glass Effect): <span id="glassValue" style="color:var(--primary);font-weight:800;">70%</span></label>
+                    <input type="range" id="themeGlass" min="0" max="100" value="70" style="width:100%;">
+                </div>
+
+                <!-- Background Opacity Slider -->
+                <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:20px;">
+                    <label data-i18n="theme_bg_opacity">🌫️ Background Image Opacity: <span id="bgOpacityValue" style="color:var(--primary);font-weight:800;">50%</span></label>
+                    <input type="range" id="themeBgOpacity" min="0" max="100" value="50" style="width:100%;">
+                </div>
+
+                <!-- Font Selector -->
+                <div class="control-card" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:24px;">
+                    <label data-i18n="theme_font">🔤 Dashboard Font</label>
+                    <select id="themeFont" class="refresh-select" style="width:100%;">
+                        <option value="'Vazirmatn', sans-serif">Vazirmatn (وزیرمتن) — Default</option>
+                        <option value="'Outfit', sans-serif">Outfit — Sleek & Modern</option>
+                        <option value="'Poppins', sans-serif">Poppins — Round & Friendly</option>
+                        <option value="'Inter', sans-serif">Inter — Professional UI</option>
+                        <option value="'JetBrains Mono', monospace">JetBrains Mono — Developer Style</option>
+                    </select>
+                </div>
+
+                <!-- Save / Reset Buttons -->
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <button class="premium-btn glow-btn" id="saveThemeBtn" data-i18n="theme_save">💾 Save & Apply</button>
+                    <button class="premium-btn" id="resetThemeBtn" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#f87171;" data-i18n="theme_reset">🔄 Reset to Default</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.8rem;opacity:0.6;">
+        Created by kimiloo 🌸
+    </footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
