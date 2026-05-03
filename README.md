@@ -1,4 +1,3 @@
-```
 # 🌸 Electonet (v3.5+ REVAMP)
 *Modern, Lightweight, Zero-Agent Server Monitoring*
 
@@ -134,5 +133,4 @@ This project is **Open Source** under the MIT License.
 **Kimilooo** - [GitHub Profile](https://github.com/kimilooo)
 
 > **Note:** This project is part of the **Electonet** ecosystem. For the best experience, adjust the glass transparency in the **Theme Builder** to match your chosen background.
-```
 
