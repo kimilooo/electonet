@@ -46,12 +46,20 @@ function setLanguage(lng) {
         document.body.style.fontFamily = isRtl ? "'Vazirmatn', sans-serif" : "'Inter', 'Segoe UI', sans-serif";
         
         localStorage.setItem('electonet_lang', lng);
+        updateLangButton();
     });
 }
 
 function toggleLang() {
     const nextLng = i18next.language === 'fa' ? 'en' : 'fa';
     setLanguage(nextLng);
+}
+
+function updateLangButton() {
+    const active = i18next.language || localStorage.getItem('electonet_lang') || 'fa';
+    document.querySelectorAll('[data-lang-toggle]').forEach(btn => {
+        btn.textContent = active === 'fa' ? '🌍 EN' : '🌍 FA';
+    });
 }
 
 function toggleMute() {
@@ -430,12 +438,12 @@ function updateBadge(elementId, value, warnThreshold, dangerThreshold) {
     
     if (value >= dangerThreshold) {
         badge.classList.add('danger');
-        badge.textContent = 'Critical';
+        badge.textContent = i18next.t('badge_critical');
     } else if (value >= warnThreshold) {
         badge.classList.add('warning');
-        badge.textContent = 'Warning';
+        badge.textContent = i18next.t('badge_warning');
     } else {
-        badge.textContent = 'Normal';
+        badge.textContent = i18next.t('badge_normal');
     }
 }
 
@@ -447,7 +455,7 @@ function updateDiagnosis(issues) {
         container.innerHTML = `
             <div class="diagnosis-item">
                 <span class="diag-icon">✅</span>
-                <span>All systems operational</span>
+                <span>${i18next.t('diag_all_ok')}</span>
             </div>
         `;
         return;
@@ -457,14 +465,14 @@ function updateDiagnosis(issues) {
         const icon = issue.level === 'critical' ? '🔴' : 
                      issue.level === 'warn' ? '🟡' : '🟢';
         const title = issue.i18n_key && i18next.exists(issue.i18n_key) ? 
-                     i18next.t(issue.i18n_key) : (issue.title || 'Unknown');
+                     i18next.t(issue.i18n_key) : (issue.title || i18next.t('unknown'));
         
         return `
             <div class="diagnosis-item">
                 <span class="diag-icon">${icon}</span>
                 <div>
                     <div style="font-weight:600;">${title}</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);">Probability: ${issue.prob}%</div>
+                    <div style="font-size:0.8rem;color:var(--text-muted);">${i18next.t('label_probability')}: ${issue.prob}%</div>
                 </div>
             </div>
         `;
@@ -526,7 +534,7 @@ async function disconnectServer() {
     }
     
     document.getElementById('connPulse').querySelector('.pulse-dot').classList.remove('online');
-    document.getElementById('serverInfo').textContent = 'Quantum Connection';
+    document.getElementById('serverInfo').textContent = i18next.t('connection_idle');
     document.getElementById('loginModal').style.display = 'flex';
     
     showNotification(i18next.t('notif_disconnected'), 'warning');
@@ -565,13 +573,13 @@ async function executeTerminalCommand(command) {
         } else {
             const errLine = document.createElement('div');
             errLine.className = 'term-line';
-            errLine.innerHTML = `<span class="term-text" style="color:#ef4444;">Error: ${escapeHtml(data.message)}</span>`;
+            errLine.innerHTML = `<span class="term-text" style="color:#ef4444;">${i18next.t('label_error')}: ${escapeHtml(data.message)}</span>`;
             terminalBody.appendChild(errLine);
         }
     } catch (error) {
         const errLine = document.createElement('div');
         errLine.className = 'term-line';
-        errLine.innerHTML = `<span class="term-text" style="color:#ef4444;">Error: ${escapeHtml(error.message)}</span>`;
+        errLine.innerHTML = `<span class="term-text" style="color:#ef4444;">${i18next.t('label_error')}: ${escapeHtml(error.message)}</span>`;
         terminalBody.appendChild(errLine);
     }
     
@@ -604,13 +612,13 @@ async function executeOptimization(action) {
         const data = await response.json();
         
         if (data.success) {
-            showNotification('Optimization completed successfully', 'success');
+            showNotification(i18next.t('notif_opt_success'), 'success');
             fetchHealthData(); // Refresh data
         } else {
-            showNotification('Optimization failed: ' + data.error, 'critical');
+            showNotification(i18next.t('notif_opt_fail', { error: data.error }), 'critical');
         }
     } catch (error) {
-        showNotification('Optimization error: ' + error.message, 'critical');
+        showNotification(i18next.t('notif_opt_err', { message: error.message }), 'critical');
     }
 }
 
@@ -619,7 +627,7 @@ async function executeOptimization(action) {
 // ============================================================
 async function executeDebug(service) {
     if (!isConnected) {
-        showNotification('Not connected to server', 'warning');
+        showNotification(i18next.t('notif_not_connected'), 'warning');
         return;
     }
     
@@ -645,10 +653,10 @@ async function executeDebug(service) {
                 <div style="color:#94a3b8; white-space:pre-wrap;">${escapeHtml(data.logs || '')}</div>
             `;
         } else {
-            output.innerHTML = `<div style="color:#ef4444;">Error: ${escapeHtml(data.error)}</div>`;
+            output.innerHTML = `<div style="color:#ef4444;">${i18next.t('label_error')}: ${escapeHtml(data.error)}</div>`;
         }
     } catch (error) {
-        output.innerHTML = `<div style="color:#ef4444;">Error: ${escapeHtml(error.message)}</div>`;
+        output.innerHTML = `<div style="color:#ef4444;">${i18next.t('label_error')}: ${escapeHtml(error.message)}</div>`;
     }
 }
 
@@ -677,10 +685,10 @@ async function executeLiveLogs(service) {
         if (data.success) {
             output.innerHTML = `<div style="color:#10b981; white-space:pre-wrap; font-family:monospace;">${escapeHtml(data.output || i18next.t('stream_no_logs'))}</div>`;
         } else {
-            output.innerHTML = `<div style="color:#ef4444;">Error: ${escapeHtml(data.message)}</div>`;
+            output.innerHTML = `<div style="color:#ef4444;">${i18next.t('label_error')}: ${escapeHtml(data.message)}</div>`;
         }
     } catch (error) {
-        output.innerHTML = `<div style="color:#ef4444;">Error: ${escapeHtml(error.message)}</div>`;
+        output.innerHTML = `<div style="color:#ef4444;">${i18next.t('label_error')}: ${escapeHtml(error.message)}</div>`;
     }
 }
 
@@ -788,7 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('connPulse').querySelector('.pulse-dot').classList.add('online');
                     document.getElementById('serverInfo').textContent = `${data.username}@${data.host}`;
                     
-                    showNotification('Session resumed successfully', 'success');
+                    showNotification(i18next.t('notif_session_resumed'), 'success');
                     
                     if (refreshInterval) clearInterval(refreshInterval);
                     refreshInterval = setInterval(fetchHealthData, 10000);
@@ -822,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshBtn.addEventListener('click', () => {
             if (isConnected) {
                 fetchHealthData();
-                showNotification('Data synchronized', 'info');
+                showNotification(i18next.t('notif_data_sync'), 'info');
             }
         });
     }
@@ -853,7 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saveMatrixTokenBtn) {
         saveMatrixTokenBtn.addEventListener('click', async () => {
             const token = document.getElementById('matrixTokenInput').value;
-            if (!token) return showNotification('Please enter a token', 'warning');
+            if (!token) return showNotification(i18next.t('notif_enter_token'), 'warning');
             try {
                 const res = await fetch(`${API}/api/matrix/token`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -861,7 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showNotification('✅ Token saved securely', 'success');
+                    showNotification(i18next.t('notif_token_saved_securely'), 'success');
                     document.getElementById('matrixTokenInput').value = ''; // clear for security
                 } else {
                     showNotification(data.error, 'critical');
@@ -874,17 +882,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (runMediaPurgeBtn) {
         runMediaPurgeBtn.addEventListener('click', async () => {
             const days = parseInt(document.getElementById('mediaPurgeDays').value) || 30;
-            if (!confirm(`Are you sure you want to purge media older than ${days} days?`)) return;
+            if (!confirm(i18next.t('confirm_purge_media', { days }))) return;
             const before_ts = Date.now() - (days * 24 * 60 * 60 * 1000);
-            showNotification('🧹 Starting media purge...', 'info');
+            showNotification(i18next.t('notif_purge_start'), 'info');
             try {
                 const res = await fetch(`${API}/api/matrix/admin`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ method: 'POST', path: `/_synapse/admin/v1/purge_media_cache?before_ts=${before_ts}` })
                 });
                 const data = await res.json();
-                if (data.success) showNotification('✅ Media Purged successfully!', 'success');
-                else showNotification('Error: ' + data.error, 'critical');
+                if (data.success) showNotification(i18next.t('notif_purge_success'), 'success');
+                else showNotification(i18next.t('label_error') + ': ' + data.error, 'critical');
             } catch (err) { showNotification(err.message, 'critical'); }
         });
     }
@@ -893,9 +901,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (runUserDeactivateBtn) {
         runUserDeactivateBtn.addEventListener('click', async () => {
             const userId = document.getElementById('matrixUserId').value;
-            if (!userId || !userId.startsWith('@')) return showNotification('Invalid User ID (must start with @)', 'warning');
-            if (!confirm(`Deactivate and PURGE data for ${userId}? This cannot be undone!`)) return;
-            showNotification(`👤 Deactivating ${userId}...`, 'info');
+            if (!userId || !userId.startsWith('@')) return showNotification(i18next.t('notif_invalid_user_id'), 'warning');
+            if (!confirm(i18next.t('confirm_deactivate_user', { userId }))) return;
+            showNotification(i18next.t('notif_deactivating_user', { userId }), 'info');
             try {
                 const res = await fetch(`${API}/api/matrix/admin`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -903,9 +911,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showNotification('✅ User deactivated & erased!', 'success');
+                    showNotification(i18next.t('notif_user_deactivated'), 'success');
                     document.getElementById('matrixUserId').value = '';
-                } else showNotification('Error: ' + data.error, 'critical');
+                } else showNotification(i18next.t('label_error') + ': ' + data.error, 'critical');
             } catch (err) { showNotification(err.message, 'critical'); }
         });
     }
@@ -914,7 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fetchMatrixStatsBtn) {
         fetchMatrixStatsBtn.addEventListener('click', async () => {
             const output = document.getElementById('matrixStatsOutput');
-            output.innerHTML = 'Fetching stats...';
+            output.innerHTML = i18next.t('loading_stats');
             try {
                 const res = await fetch(`${API}/api/matrix/admin`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -924,9 +932,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.success) {
                     output.innerHTML = JSON.stringify(data.data || JSON.parse(data.raw), null, 2);
                 } else {
-                    output.innerHTML = 'Error: ' + data.error;
+                    output.innerHTML = i18next.t('label_error') + ': ' + data.error;
                 }
-            } catch (err) { output.innerHTML = 'Error: ' + err.message; }
+            } catch (err) { output.innerHTML = i18next.t('label_error') + ': ' + err.message; }
         });
     }
     
@@ -951,7 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const action = btn.dataset.action;
             if (action) {
                 if (action === 'reboot_server') {
-                    if (confirm('Are you sure you want to reboot the server?')) {
+                    if (confirm(i18next.t('confirm_reboot'))) {
                         executeOptimization(action);
                     }
                 } else {
@@ -990,8 +998,22 @@ document.addEventListener('DOMContentLoaded', () => {
             fallbackLng: 'en',
             resources: {
                 fa: { translation: {
-                    'login_subtitle': 'سیستم مانیتورینگ هوشمند لوتوس',
+                    'login_subtitle': 'سیستم مانیتورینگ هوشمند',
                     'login_btn': 'ورود به سیستم',
+                    'ph_server': 'آی‌پی سرور / دامنه',
+                    'ph_port': 'پورت (22)',
+                    'ph_username': 'نام کاربری',
+                    'ph_password': 'رمز عبور SSH',
+                    'logout_btn': '🚪 خروج',
+                    'sync_btn': '🔄 همگام‌سازی',
+                    'connection_idle': 'اتصال کوانتومی',
+                    'badge_normal': 'عادی',
+                    'badge_warning': 'هشدار',
+                    'badge_critical': 'بحرانی',
+                    'label_error': 'خطا',
+                    'label_probability': 'احتمال',
+                    'diag_all_ok': 'همه سیستم‌ها عملیاتی هستند',
+                    'unknown': 'نامشخص',
                     'resume_found': 'نشست قبلی پیدا شد!',
                     'label_quick_login': '⚡ ورود سریع',
                     'overview_tab': 'نمای کلی',
@@ -1109,6 +1131,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     'notif_opt_err': 'خطای سیستمی: {{message}}',
                     'notif_already_conn': 'قبلاً متصل شده‌اید',
                     'notif_data_sync': 'داده‌ها همگام‌سازی شدند',
+                    'notif_session_resumed': 'نشست با موفقیت بازیابی شد',
+                    'notif_enter_token': 'لطفا توکن را وارد کنید',
+                    'notif_token_saved_securely': '✅ توکن با موفقیت و امن ذخیره شد',
+                    'confirm_purge_media': 'آیا مطمئن هستید که مدیای قدیمی‌تر از {{days}} روز پاک شود؟',
+                    'notif_purge_start': '🧹 شروع پاکسازی مدیا...',
+                    'notif_purge_success': '✅ پاکسازی مدیا با موفقیت انجام شد!',
+                    'notif_invalid_user_id': 'شناسه کاربر نامعتبر است (باید با @ شروع شود)',
+                    'confirm_deactivate_user': 'کاربر {{userId}} غیرفعال و داده‌هایش حذف شود؟ این عملیات قابل بازگشت نیست.',
+                    'notif_deactivating_user': '👤 در حال غیرفعال‌سازی {{userId}}...',
+                    'notif_user_deactivated': '✅ کاربر غیرفعال و داده‌ها حذف شد!',
+                    'loading_stats': 'در حال دریافت آمار...',
+                    'confirm_reboot': 'آیا مطمئن هستید که سرور ریبوت شود؟',
                     'notif_theme_saved': '✅ تنظیمات ذخیره شد!',
                     'notif_theme_reset': '🔄 تنظیمات به حالت اولیه برگشت',
                     'notif_preset_applied': 'پیش‌تنظیم اعمال شد: {{name}}',
@@ -1117,6 +1151,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 en: { translation: {
                     'login_subtitle': 'Lotus Smart Monitoring System',
                     'login_btn': 'Login Now',
+                    'ph_server': 'Server IP / Domain',
+                    'ph_port': 'Port (22)',
+                    'ph_username': 'Username',
+                    'ph_password': 'SSH Password',
+                    'logout_btn': '🚪 Exit',
+                    'sync_btn': '🔄 Sync',
+                    'connection_idle': 'Quantum Connection',
+                    'badge_normal': 'Normal',
+                    'badge_warning': 'Warning',
+                    'badge_critical': 'Critical',
+                    'label_error': 'Error',
+                    'label_probability': 'Probability',
+                    'diag_all_ok': 'All systems operational',
+                    'unknown': 'Unknown',
                     'resume_found': 'Previous session found!',
                     'label_quick_login': '⚡ Quick Login',
                     'overview_tab': 'Overview',
@@ -1234,6 +1282,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     'notif_opt_err': 'Optimization error: {{message}}',
                     'notif_already_conn': 'Already connected',
                     'notif_data_sync': 'Data synchronized',
+                    'notif_session_resumed': 'Session resumed successfully',
+                    'notif_enter_token': 'Please enter a token',
+                    'notif_token_saved_securely': '✅ Token saved securely',
+                    'confirm_purge_media': 'Are you sure you want to purge media older than {{days}} days?',
+                    'notif_purge_start': '🧹 Starting media purge...',
+                    'notif_purge_success': '✅ Media purged successfully!',
+                    'notif_invalid_user_id': 'Invalid User ID (must start with @)',
+                    'confirm_deactivate_user': 'Deactivate and purge data for {{userId}}? This cannot be undone!',
+                    'notif_deactivating_user': '👤 Deactivating {{userId}}...',
+                    'notif_user_deactivated': '✅ User deactivated and erased!',
+                    'loading_stats': 'Fetching stats...',
+                    'confirm_reboot': 'Are you sure you want to reboot the server?',
                     'notif_theme_saved': '✅ Theme saved!',
                     'notif_theme_reset': '🔄 Theme reset to default',
                     'notif_preset_applied': 'Preset applied: {{name}}',
@@ -1363,7 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const t = { ...preset, sidebar: preset.bg, glass: 70, bgOpacity: 50, bgImg: '', font: "'Vazirmatn', 'Segoe UI', sans-serif" };
                 applyThemeVars(t);
                 populateThemeUI(t);
-                showNotification('Preset applied: ' + btn.dataset.preset, 'info');
+                showNotification(i18next.t('notif_preset_applied', { name: btn.dataset.preset }), 'info');
             }
         });
     });
@@ -1388,7 +1448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const t = getCurrentThemeFromUI();
         localStorage.setItem('electonet_theme', JSON.stringify(t));
         applyThemeVars(t);
-        showNotification('✅ Theme saved!', 'success');
+        showNotification(i18next.t('notif_theme_saved'), 'success');
     });
 
     const resetBtn = document.getElementById('resetThemeBtn');
@@ -1397,7 +1457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const def = { ...PRESETS.electonet, sidebar: '#0f0c29', glass: 70, bgOpacity: 50, bgImg: '', font: "'Vazirmatn', sans-serif" };
         applyThemeVars(def);
         populateThemeUI(def);
-        showNotification('🔄 Theme reset to default', 'info');
+        showNotification(i18next.t('notif_theme_reset'), 'info');
     });
 
     // Card glow mouse tracking

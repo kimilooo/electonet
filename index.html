@@ -29,9 +29,10 @@
 <!-- ============================================================ -->
 <div class="login-overlay" id="loginModal">
     <div class="login-glass">
+        <button class="icon-btn login-lang-btn" onclick="toggleLang()" data-lang-toggle title="Language">🌍 EN</button>
         <div class="lotus-glow">🌸</div>
         <h1 class="text-gradient">Electonet</h1>
-        <p class="login-sub" data-i18n="login_subtitle">Lotus Smart Monitoring System</p>
+        <p class="login-sub" data-i18n="login_subtitle">Smart Monitoring System</p>
 
         <!-- Resume Connection -->
         <div id="resumeConnection" style="display:none; margin-bottom: 20px; width: 100%;">
@@ -45,14 +46,14 @@
 
         <form id="loginForm" autocomplete="off">
             <div class="input-group">
-                <input type="text" id="hostInput" placeholder="Server IP / Domain" required dir="ltr">
+                <input type="text" id="hostInput" data-i18n="ph_server" placeholder="Server IP / Domain" required dir="ltr">
             </div>
             <div class="input-row">
-                <input type="number" id="portInput" placeholder="Port (22)" value="22" required dir="ltr">
-                <input type="text" id="userInput" placeholder="Username" required dir="ltr">
+                <input type="number" id="portInput" data-i18n="ph_port" placeholder="Port (22)" value="22" required dir="ltr">
+                <input type="text" id="userInput" data-i18n="ph_username" placeholder="Username" required dir="ltr">
             </div>
             <div class="input-group">
-                <input type="password" id="passInput" placeholder="SSH Password" required dir="ltr">
+                <input type="password" id="passInput" data-i18n="ph_password" placeholder="SSH Password" required dir="ltr">
             </div>
             <button type="submit" class="premium-btn glow-btn" data-i18n="login_btn">Login Now</button>
         </form>
@@ -120,7 +121,7 @@
     </div>
 
     <div class="sidebar-footer" style="padding: 20px; text-align: center; border-top: 1px solid var(--glass-border);">
-        <button class="logout-btn" id="logoutBtn" style="margin-bottom: 15px;">🚪 Exit</button>
+        <button class="logout-btn" id="logoutBtn" style="margin-bottom: 15px;" data-i18n="logout_btn">🚪 Exit</button>
         <div class="author-credit" style="font-size: 0.75rem; opacity: 0.6;">
             Developed by <a href="https://github.com/kimilooo" target="_blank" style="color: var(--primary); font-weight: 700; text-decoration: none;">Kimilooo</a>
         </div>
@@ -137,14 +138,14 @@
             <button class="menu-toggle" id="menuToggle" onclick="document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('active')">☰</button>
             <div class="server-status" id="connPulse">
                 <span class="pulse-dot"></span>
-                <span id="serverInfo">Quantum Connection</span>
+                <span id="serverInfo" data-i18n="connection_idle">Quantum Connection</span>
             </div>
         </div>
         <div class="header-right">
             <div class="time-warp" id="timeWarp">00:00:00</div>
             <button class="icon-btn" onclick="toggleMute()" id="muteBtn">🔊</button>
-            <button class="icon-btn" onclick="toggleLang()">🌍</button>
-            <button class="premium-btn refresh-btn" id="refreshBtn">🔄 SYNC</button>
+            <button class="icon-btn" onclick="toggleLang()" id="langBtn" data-lang-toggle title="Language">🌍 EN</button>
+            <button class="premium-btn refresh-btn" id="refreshBtn" data-i18n="sync_btn">🔄 SYNC</button>
         </div>
     </header>
 
