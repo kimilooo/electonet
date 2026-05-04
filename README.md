@@ -49,7 +49,7 @@ graph LR
 ### 🚀 Getting Started
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/kimilooo/electonet-dashboard.git
+   git clone https://github.com/kimilooo/electonet.git
    cd electonet-dashboard
    ```
 2. **Install dependencies:**
@@ -94,7 +94,7 @@ We follow the **GitHub Flow**:
 ### 🚀 نصب و راه‌اندازی
 1. **دریافت پروژه:**
    ```bash
-   git clone https://github.com/kimilooo/electonet-dashboard.git
+   git clone https://github.com/kimilooo/electonet.git
    cd electonet-dashboard
    ```
 2. **نصب پیش‌نیازها:**
