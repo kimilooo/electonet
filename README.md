@@ -67,6 +67,19 @@ graph LR
    ```
 5. **Access UI:** Open `http://localhost:3456` and connect using your server's SSH credentials.
 
+### 🐳 Quick Start with Docker
+1. **Build the image:**
+   ```bash
+   docker build -t electonet .
+   ```
+2. **Run the container:**
+   ```bash
+   docker run -d -p 3456:3456 --name electonet electonet
+   ```
+3. **Access UI:** Open `http://localhost:3456`
+
+No Node.js installation required.
+
 ### 🐛 Found a Bug? | Feature Request?
 Your support means everything 🫶 If you encounter any issues or have a brilliant idea:
 1. Open an **Issue** on GitHub: [Create Issue](https://github.com/kimilooo/electonet/issues/new)
@@ -117,6 +130,19 @@ We follow the **GitHub Flow**:
    ```
 5. **دسترسی:** آدرس `http://localhost:3456` را در مرورگر باز کرده و با مشخصات SSH سرور خود متصل شوید.
 
+### 🐳 اجرای سریع با Docker
+1. **ساخت ایمیج:**
+   ```bash
+   docker build -t electonet .
+   ```
+2. **اجرای کانتینر:**
+   ```bash
+   docker run -d -p 3456:3456 --name electonet electonet
+   ```
+3. **دسترسی:** آدرس `http://localhost:3456` را باز کنید.
+
+بدون نیاز به نصب Node.js.
+
 ### 🐛 باگ پیدا کردی؟ | پیشنهاد ویژگی جدید؟
 حمایت تو همه‌چیزه 🫶 اگه به مشکلی برخوردی یا ایده‌ای داری که الکترونت رو بهتر کنه:
 1. یه **Issue** روی گیت‌هاب باز کن: [ساخت Issue جدید](https://github.com/kimilooo/electonet/issues/new)
@@ -143,4 +169,3 @@ This project is **Open Source** under the MIT License.
 **Kimilooo** - [GitHub Profile](https://github.com/kimilooo)
 
 > **Note:** This project is part of the **Electonet** ecosystem. For the best experience, adjust the glass transparency in the **Theme Builder** to match your chosen background.
-
