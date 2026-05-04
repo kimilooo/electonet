@@ -40,10 +40,10 @@
 ### 🕸️ Architecture Flow
 ```mermaid
 graph LR
-    A([User Dashboard]) -- "HTTP / Port 3456" --> B[Nexus Node.js Server]
-    B -- "Encrypted SSH Tunnel (Zero Agents)" --> C[{Target Linux Server}]
-    C -. "Admin API" .-> D[Matrix Synapse]
-    C -. "native commands" .-> F[systemctl / journalctl]
+    A(User Dashboard) -- HTTP / Port 3456 --> B(Nexus Node.js Server)
+    B -- SSH Tunnel / Zero Agents --> C(Target Linux Server)
+    C -. Admin API .-> D(Matrix Synapse)
+    C -. native commands .-> F(systemctl journalctl)
 ```
 
 ### 🚀 Getting Started
