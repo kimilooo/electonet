@@ -50,21 +50,26 @@ graph LR
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/kimilooo/electonet.git
-   cd electonet-dashboard
+   cd electonet
    ```
 2. **Install dependencies:**
    ```bash
    npm install
    ```
-3. **Run the server:**
+3. **Configure environment (optional):**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your custom settings, or skip this step to use defaults
+   ```
+4. **Run the server:**
    ```bash
    node server.js
    ```
-4. **Access UI:** Open `http://localhost:3456` and connect using your server's SSH credentials.
+5. **Access UI:** Open `http://localhost:3456` and connect using your server's SSH credentials.
 
 ### 🐛 Found a Bug? | Feature Request?
 Your support means everything 🫶 If you encounter any issues or have a brilliant idea:
-1. Open an **Issue** on GitHub: [Create Issue](https://github.com/kimilooo/electonet-dashboard/issues/new)
+1. Open an **Issue** on GitHub: [Create Issue](https://github.com/kimilooo/electonet/issues/new)
 2. Tag it properly: `bug`, `enhancement`, or `question`
 3. Describe the problem or idea with as much detail as possible
 
@@ -95,21 +100,26 @@ We follow the **GitHub Flow**:
 1. **دریافت پروژه:**
    ```bash
    git clone https://github.com/kimilooo/electonet.git
-   cd electonet-dashboard
+   cd electonet
    ```
 2. **نصب پیش‌نیازها:**
    ```bash
    npm install
    ```
-3. **اجرای برنامه:**
+3. **تنظیمات محیطی (اختیاری):**
+   ```bash
+   cp .env.example .env
+   # فایل .env رو با تنظیمات دلخواه ویرایش کن، یا این قدم رو رد کن
+   ```
+4. **اجرای برنامه:**
    ```bash
    node server.js
    ```
-4. **دسترسی:** آدرس `http://localhost:3456` را در مرورگر باز کرده و با مشخصات SSH سرور خود متصل شوید.
+5. **دسترسی:** آدرس `http://localhost:3456` را در مرورگر باز کرده و با مشخصات SSH سرور خود متصل شوید.
 
 ### 🐛 باگ پیدا کردی؟ | پیشنهاد ویژگی جدید؟
 حمایت تو همه‌چیزه 🫶 اگه به مشکلی برخوردی یا ایده‌ای داری که الکترونت رو بهتر کنه:
-1. یه **Issue** روی گیت‌هاب باز کن: [ساخت Issue جدید](https://github.com/kimilooo/electonet-dashboard/issues/new)
+1. یه **Issue** روی گیت‌هاب باز کن: [ساخت Issue جدید](https://github.com/kimilooo/electonet/issues/new)
 2. برچسب مناسب رو بهش بزن: `bug` (باگ)، `enhancement` (پیشنهاد بهبود)، یا `question` (سوال)
 3. مشکل یا ایده‌ات رو با جزئیات کامل توضیح بده
 
