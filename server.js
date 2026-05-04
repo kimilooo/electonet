@@ -1,3 +1,16 @@
+// Load .env file if exists
+try {
+    const envPath = require('path').join(__dirname, '.env');
+    if (require('fs').existsSync(envPath)) {
+        const envContent = require('fs').readFileSync(envPath, 'utf8');
+        envContent.split('\n').forEach(line => {
+            const [key, ...vals] = line.split('=');
+            if (key && vals.length > 0 && !key.trim().startsWith('#')) {
+                process.env[key.trim()] = vals.join('=').trim();
+            }
+        });
+    }
+} catch(e) {}
 const express = require('express');
 const { Client } = require('ssh2');
 const fs = require('fs');
@@ -21,6 +34,7 @@ let connectionInfo = null;
 let savedCreds = null; // Keep in memory for auto-reconnect
 let commandHistory = [];
 const MAX_HISTORY = 100;
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'e1ectoN3t';
 
 // ===== Blocked dangerous commands =====
 const BLOCKED_PATTERNS = [
@@ -53,7 +67,7 @@ function logOperation(action, detail) {
 
 // ===== Credentials =====
 function xorEncrypt(str) {
-    const key = 'e1ectoN3t';
+    const key = ENCRYPTION_KEY;
     const buf = Buffer.from(str, 'utf8');
     const result = Buffer.alloc(buf.length);
     for (let i = 0; i < buf.length; i++) {
@@ -63,7 +77,7 @@ function xorEncrypt(str) {
 }
 
 function xorDecrypt(encoded) {
-    const key = 'e1ectoN3t';
+    const key = ENCRYPTION_KEY;
     const buf = Buffer.from(encoded, 'base64');
     const result = Buffer.alloc(buf.length);
     for (let i = 0; i < buf.length; i++) {
@@ -642,7 +656,7 @@ app.post('/api/matrix/admin', async (req, res) => {
     }
 });
 
-const PORT = 3456;
+const PORT = process.env.PORT || 3456;
 app.listen(PORT, () => {
     console.log('\n  💜 ══════════════════════════════════════ 💜');
     console.log('  🌸  Electonet Monitoring Dashboard v2.0');
