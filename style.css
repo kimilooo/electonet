@@ -1563,7 +1563,36 @@ input[type="color"]:hover {
 .ring-text .value-unit { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
 
 /* Orb Menu */
-.sidebar-menu { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+    flex: 1;                    /* ★ فضای باقی‌مونده رو کامل پر کنه */
+    overflow-y: auto;           /* ★ اسکرول عمودی فعال بشه */
+    overflow-x: hidden;         /* ★ اسکرول افقی مخفی بشه */
+    padding-right: 6px;         /* ★ فاصله از لبه برای اسکرول بار */
+    min-height: 0;              /* ★ حیاتی: اجازه بده کوچیکتر از محتوا بشه و اسکرول کنه */
+}
+
+/* ★ زیباسازی اسکرول بار (اختیاری ولی قشنگش می‌کنه) */
+.sidebar-menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(var(--primary-rgb), 0.3);
+    border-radius: 10px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--primary-rgb), 0.5);
+}
 
 .orb-menu-item {
     display: flex; align-items: center; gap: 16px;

@@ -167,8 +167,33 @@ function initCharts() {
         return;
     }
     
-    const ctx = document.getElementById('resourceChart');
-    if (!ctx) return;
+    const canvas = document.getElementById('resourceChart');
+    if (!canvas) return;
+    
+    // ★ پاک کردن ابعاد قبلی
+    canvas.style.width = '';
+    canvas.style.height = '';
+    canvas.removeAttribute('width');
+    canvas.removeAttribute('height');
+    
+    // ★ گرفتن container برای محاسبه اندازه
+    const container = canvas.parentElement;
+    const containerWidth = container.clientWidth || 800;
+    const containerHeight = 350;
+    
+    // ★ تنظیم دستی ابعاد canvas
+    canvas.style.width = '100%';
+    canvas.style.height = containerHeight + 'px';
+    canvas.width = containerWidth;
+    canvas.height = containerHeight;
+    
+    // ★ اگه نمودار قبلی هست، نابودش کن
+    if (resourceChart) {
+        resourceChart.destroy();
+        resourceChart = null;
+    }
+    
+    const ctx = canvas.getContext('2d');
     
     resourceChart = new Chart(ctx, {
         type: 'line',
@@ -194,11 +219,17 @@ function initCharts() {
             ]
         },
         options: {
-            responsive: true,
+            responsive: false,           // ★ false = اندازه دستی ما رو قبول کنه
             maintainAspectRatio: false,
             scales: {
-                y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } },
-                x: { grid: { display: false } }
+                y: { 
+                    beginAtZero: true, 
+                    max: 100, 
+                    grid: { color: 'rgba(255,255,255,0.05)' } 
+                },
+                x: { 
+                    grid: { display: false } 
+                }
             },
             plugins: {
                 legend: { display: false }
@@ -206,7 +237,6 @@ function initCharts() {
         }
     });
 }
-
 function updateCharts(cpu, ramPct) {
     if (!resourceChart) return;
     
@@ -312,25 +342,34 @@ function showNotification(message, type = 'info') {
 // TAB NAVIGATION
 // ============================================================
 function switchTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
+    currentTab = tabName;
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.orb-menu-item').forEach(m => m.classList.remove('active'));
     
-    const target = document.getElementById(`tab-${tabName}`);
-    if (target) {
-        target.classList.add('active');
+    const targetTab = document.getElementById('tab-' + tabName);
+    if (targetTab) targetTab.classList.add('active');
+    
+    const targetMenu = document.querySelector(`.orb-menu-item[data-tab="${tabName}"]`);
+    if (targetMenu) targetMenu.classList.add('active');
+    
+    // ★★★ راه حل اصلی: نابود و بازسازی نمودار ★★★
+    if (tabName === 'charts') {
+        if (resourceChart) {
+            resourceChart.destroy();
+            resourceChart = null;
+        }
+        // یه تاخیر کوچیک برای اینکه تب کامل نمایش داده بشه
+        setTimeout(() => {
+            initCharts();
+        }, 50);
     }
     
-    document.querySelectorAll('.orb-menu-item').forEach(item => {
-        item.classList.remove('active');
-        if (item.dataset.tab === tabName) {
-            item.classList.add('active');
-        }
-    });
-    
-    currentTab = tabName;
+    // Close sidebar on mobile
+    if (window.innerWidth <= 900) {
+        document.getElementById('sidebar')?.classList.remove('open');
+        document.getElementById('sidebarOverlay')?.classList.remove('active');
+    }
 }
-
 // ============================================================
 // DATA FETCHING & UPDATING
 // ============================================================
