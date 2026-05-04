@@ -1674,6 +1674,12 @@ input[type="color"]:hover {
     animation: petalFloat 3s ease-in-out infinite;
     filter: drop-shadow(0 0 20px rgba(var(--primary-rgb), 0.6));
 }
+.login-lang-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+}
 
 /* Top Header - new class name used in HTML */
 .top-header {
